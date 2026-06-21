@@ -150,6 +150,21 @@ body{background:#050810;font-family:'Inter',sans-serif;color:var(--text);}
 .ccard:hover{background:var(--g2);transform:translateY(-2px);}
 .clabel{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:.8rem;opacity:.9;}
 .cdetail{font-size:11px;color:var(--text2);line-height:2.1;}
+.cform{padding:1.75rem;border-radius:16px;border:1px solid var(--border);margin-top:1.5rem;}
+.cform-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem;}
+.cform-full{grid-column:1/-1;}
+.cf-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:.5rem;opacity:.9;display:block;}
+.cf-input,.cf-select,.cf-textarea{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:11px 12px;color:var(--text);font-family:'Inter',sans-serif;font-size:12px;outline:none;transition:all .3s;}
+.cf-input:focus,.cf-select:focus,.cf-textarea:focus{border-color:var(--gold2);background:rgba(255,255,255,0.07);}
+.cf-textarea{resize:vertical;min-height:100px;font-family:'Inter',sans-serif;}
+.cf-select option{background:#0a0f1e;color:var(--text);}
+.cf-submit{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold2);background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.25);cursor:pointer;font-family:'Inter',sans-serif;padding:13px 24px;transition:all 0.3s;border-radius:10px;margin-top:.5rem;}
+.cf-submit:hover{color:#fff;border-color:var(--gold2);background:rgba(201,168,76,0.15);}
+.cf-submit:disabled{opacity:0.5;cursor:not-allowed;}
+.cf-msg{font-size:11px;margin-top:1rem;display:none;}
+.cf-msg.show{display:block;}
+.cf-msg.success{color:var(--gold2);}
+.cf-msg.error{color:#ff8080;}
 
 .dp-close-btn{background:rgba(255,255,255,0.08);border:1px solid var(--border);color:var(--text2);font-size:16px;cursor:pointer;font-family:'Inter',sans-serif;border-radius:8px;padding:4px 10px;transition:all .2s;}
 .dp-close-btn:hover{background:var(--g3);color:#fff;}
@@ -308,6 +323,36 @@ body{background:#050810;font-family:'Inter',sans-serif;color:var(--text);}
   <div class="section">
     <div class="sec-hd"><span class="sec-num">06</span><h2 class="sec-title">Contact &amp; Offices</h2><div class="sec-line"></div></div>
     <p style="font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:300;color:var(--text2);font-style:italic;text-align:center;margin-bottom:1.5rem;">"Every great structure begins with a single conversation."</p>
+    <div class="ccard glass cform">
+      <div class="clabel">Start a Conversation</div>
+      <form id="contactForm">
+        <div class="cform-grid">
+          <div>
+            <label class="cf-label">Full Name</label>
+            <input class="cf-input" type="text" name="name" required>
+          </div>
+          <div>
+            <label class="cf-label">Email</label>
+            <input class="cf-input" type="email" name="email" required>
+          </div>
+          <div class="cform-full">
+            <label class="cf-label">Project Type</label>
+            <select class="cf-select" name="project_type">
+              <option>Renovation</option>
+              <option>New Build</option>
+              <option>Commercial</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="cform-full">
+            <label class="cf-label">Message</label>
+            <textarea class="cf-textarea" name="message" required></textarea>
+          </div>
+        </div>
+        <button class="cf-submit" type="submit">Send Message &rarr;</button>
+        <div class="cf-msg" id="cfMsg"></div>
+      </form>
+    </div>
     <div class="cgrid">
       <div class="ccard glass"><div class="clabel">Dubai HQ</div><div class="cdetail">DIFC Gate Building, Level 14<br>Dubai, UAE<br><br>+971 4 800 2200<br>enquiries@cornerstone.com</div></div>
       <div class="ccard glass"><div class="clabel">London Office</div><div class="cdetail">1 Canada Square, Canary Wharf<br>London E14 5AB, UK<br><br>+44 20 7946 0800<br>london@cornerstone.com</div></div>
@@ -830,4 +875,34 @@ awards.forEach(a=>al.innerHTML+=`<div class="arow glass"><div class="ayear">${a.
     .from('.sky-card',{opacity:0,y:20,duration:.5,stagger:.06,onComplete(){gsap.set(this.targets(),{clearProps:'transform'});}},'-=0.3')
     .add(()=>animateCounters(),'-=1.2');
 })();
+</script>
+
+<script>
+document.getElementById('contactForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const form = e.target;
+  const btn = form.querySelector('.cf-submit');
+  const msg = document.getElementById('cfMsg');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  try {
+    const res = await fetch('https://formspree.io/f/mojoawyw', {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' }
+    });
+    if (res.ok) {
+      msg.textContent = "Thank you. We'll be in touch shortly.";
+      msg.className = 'cf-msg show success';
+      form.reset();
+    } else {
+      throw new Error();
+    }
+  } catch {
+    msg.textContent = 'Something went wrong. Please email us directly.';
+    msg.className = 'cf-msg show error';
+  }
+  btn.disabled = false;
+  btn.textContent = 'Send Message →';
+});
 </script>
