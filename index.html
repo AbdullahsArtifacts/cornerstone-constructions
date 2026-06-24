@@ -1,4 +1,12 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta name="robots" content="noindex, nofollow">
+<title>Cornerstone Group</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js"></script>
@@ -325,7 +333,11 @@ body{background:#050810;font-family:'Inter',sans-serif;color:var(--text);}
     <p style="font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:300;color:var(--text2);font-style:italic;text-align:center;margin-bottom:1.5rem;">"Every great structure begins with a single conversation."</p>
     <div class="ccard glass cform">
       <div class="clabel">Start a Conversation</div>
-      <form id="contactForm">
+      <form id="contactForm" action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="64cb916d-8f64-4b08-96e2-b2b6a3d5a3a8">
+        <input type="hidden" name="subject" value="New Enquiry — Cornerstone Group">
+        <input type="hidden" name="from_name" value="Cornerstone Group">
+        <input type="checkbox" name="botcheck" style="display:none">
         <div class="cform-grid">
           <div>
             <label class="cf-label">Full Name</label>
@@ -363,10 +375,34 @@ body{background:#050810;font-family:'Inter',sans-serif;color:var(--text);}
     </div>
   </div>
 </div>
+
+<!-- PAGE: PRIVACY POLICY -->
+<div class="pg" id="pg-privacy">
+  <div class="section" style="max-width:780px;">
+    <div class="sec-hd"><span class="sec-num">—</span><h2 class="sec-title">Privacy Policy</h2><div class="sec-line"></div></div>
+    <div class="glass" style="padding:2.5rem;margin-bottom:1rem;">
+      <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:.6rem;opacity:.9;">Notice</div>
+      <p style="font-size:.95rem;color:rgba(255,255,255,.55);line-height:1.9;font-weight:300;">This privacy policy is currently being prepared and will be published shortly. If you have any privacy-related questions in the meantime, please contact us directly.</p>
+    </div>
+    <div class="glass" style="padding:2rem 2.5rem;margin-bottom:2.5rem;">
+      <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:1.2rem;">Contact for Privacy Enquiries</div>
+      <div style="font-size:.9rem;color:rgba(255,255,255,.5);line-height:2;font-weight:300;">Cornerstone Group<br>DIFC Gate Building, Level 14, Dubai, UAE<br>Email: <span style="color:var(--gold2);">enquiries@cornerstone.com</span></div>
+    </div>
+    <button onclick="go('home')" style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.25);color:var(--gold2);font-family:'Inter',sans-serif;font-size:.75rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;padding:.85rem 2rem;cursor:pointer;border-radius:10px;transition:all .3s;">← Back to Home</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer style="background:rgba(5,8,16,.9);border-top:1px solid rgba(255,255,255,.08);padding:1.5rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+  <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;letter-spacing:3px;color:var(--gold2);text-transform:uppercase;">Corner<em style="font-style:italic;color:#fff;">stone</em> Group</div>
+  <div style="font-size:.65rem;color:rgba(255,255,255,.2);letter-spacing:.1em;">© 2024 Cornerstone Group. All rights reserved.</div>
+  <button onclick="go('privacy')" style="background:none;border:none;font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:rgba(255,255,255,.3);cursor:pointer;font-family:'Inter',sans-serif;transition:color .25s;" onmouseenter="this.style.color='var(--gold2)'" onmouseleave="this.style.color='rgba(255,255,255,.3)'">Privacy Policy</button>
+</footer>
+
 </div>
 
 <script>
-const PAGES=['home','projects','pipeline','revenue','team','awards','contact'];
+const PAGES=['home','projects','pipeline','revenue','team','awards','contact','privacy'];
 let pgBusy=false;
 function go(id){
   if(pgBusy) return;
@@ -886,12 +922,13 @@ document.getElementById('contactForm').addEventListener('submit', async function
   btn.disabled = true;
   btn.textContent = 'Sending...';
   try {
-    const res = await fetch('https://formspree.io/f/mojoawyw', {
+    const res = await fetch('https://api.web3forms.com/submit', {
       method: 'POST',
       body: new FormData(form),
       headers: { 'Accept': 'application/json' }
     });
-    if (res.ok) {
+    const data = await res.json();
+    if (data.success) {
       msg.textContent = "Thank you. We'll be in touch shortly.";
       msg.className = 'cf-msg show success';
       form.reset();
